@@ -1,16 +1,16 @@
 from aiogram import Router, F, Bot
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, callback_data
 from aiogram.types import Message, CallbackQuery, BufferedInputFile, ReplyKeyboardRemove
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from aiogram.fsm.context import FSMContext
 import keyboards as kb
 from config import language as lg
-from config import weekdays, ADMIN_CHAT
+from config import weekdays, ADMIN_CHAT, months
 from states import take_url, cut_link, qr_link, send_message
 from statistics import new_request, generate_diagram
 from langid import classify, set_languages
 from icalendar import Calendar
-from datetime import datetime
+from datetime import datetime, date
 from calendar import monthrange
 from urls import fetch_ical, short_link
 from io import BytesIO
@@ -94,7 +94,10 @@ async def take_schedule(message:Message, state: FSMContext):
 
         await new_request('timetable', message.chat.id)
 
-        await msg.edit_text(stroka, reply_markup=kb.week[language], parse_mode='HTML')
+        keyboard = await kb.generate_week_keyboard(int(datetime.now().day), int(datetime.now().month), int(datetime.now().year))
+        print(keyboard[language])
+
+        await msg.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
 
 
 @user.message(F.text.in_(['🗺 Карта ПГНИУ', '🗺 Map of PSU', '🗺 地圖']))
@@ -232,9 +235,8 @@ async def get_url(message: Message, state:FSMContext):
             await message.answer(f'{lg['link_error'][language]}',
                                  parse_mode='HTML')
 
-
-@user.callback_query(F.data.in_(['mon', 'tue', 'wed', 'thu', 'fri', 'sat']))
-async def week_day(call: CallbackQuery):
+@user.callback_query(F.data.startswith('date_'))
+async def week_days(call: CallbackQuery):
     async with aiosqlite.connect('psu.db') as db:
         async with db.execute('SELECT url, user_language FROM users WHERE user_id = ?', (call.message.chat.id,)) as cur:
             take_data = await cur.fetchone()
@@ -244,25 +246,39 @@ async def week_day(call: CallbackQuery):
 
     await call.message.edit_text(f'{lg['loading'][language]}')
 
-    need_number = int(weekdays.index(call.data)) - (int(datetime.now().weekday()))
-    last_number = str(int(str(datetime.now()).split()[0][-2:]) + need_number)
+    new_date, new_month = map(int, call.data.split('_')[1].split('.'))
 
-    if int(last_number) > monthrange(datetime.now().year, datetime.now().month)[1]:
-        last_number = str(int(last_number) - monthrange(datetime.now().year, datetime.now().month)[1])
+    if new_date > months[new_month]:
+        new_date -= months[new_month]
+        new_month += 1
 
-    elif int(last_number) < 1:
-        last_number = str(monthrange(datetime.now().year, datetime.now().month-1)[1] - int(last_number))
+    elif new_date < 1:
+        new_month -= 1
+        new_date = months[new_month] + new_date
 
-    if len(last_number) != 2:
-        last_number = '0'+last_number
+    if new_month == 0:
+        new_year = datetime.now().year - 1
 
-    date = str(datetime.now()).split()[0][:-2] + last_number
-    date_title = f'{date[8:]}.{date[5:7]}.{date[0:4]}'
+    elif new_month == 13:
+        new_year = datetime.now().year + 1
+
+    else:
+        new_year = datetime.now().year
+
+    if new_date // 10 == 0:
+        new_date = '0' + str(new_date)
+
+    if new_month // 10 == 0:
+        new_month = '0' + str(new_month)
+
+    result_date = str(new_year) + str(new_month) + str(new_date)
+    date_title = f'{result_date[6:]}.{result_date[4:6]}.{result_date[:4]}'
 
     url = await fetch_ical(link)
     cal = Calendar.from_ical(url)
 
-    timetable = {'08:00' : '<b>1.</b> ', '09:45': '<b>2.</b> ', '11:30': '<b>3.</b> ', '13:30': '<b>4.</b> ', '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> '}
+    timetable = {'08:00': '<b>1.</b> ', '09:45': '<b>2.</b> ', '11:30': '<b>3.</b> ', '13:30': '<b>4.</b> ',
+                 '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> '}
 
     for component in cal.walk():
         if component.name == "VEVENT":
@@ -272,14 +288,16 @@ async def week_day(call: CallbackQuery):
             location = str(component.get('location'))
             teacher = str(component.get('description'))
 
-            if date in start:
-                timetable[start.split()[1].split('+')[0][:5]] += f'<b>{sunject}</b>\n🏛 {location}\n👩‍🏫 <i>{teacher}</i>\n⏱️ <code>{start.split()[1].split('+')[0][:5]} - {end}</code>'
+            if result_date in start:
+                timetable[start.split()[1].split('+')[0][
+                    :5]] += f'<b>{sunject}</b>\n🏛 {location}\n👩‍🏫 <i>{teacher}</i>\n⏱️ <code>{start.split()[1].split('+')[0][:5]} - {end}</code>'
 
-    stroka = f'<b>{lg['days'][language][int(datetime.now().weekday()) + int(need_number)]} {date_title}</b>\n\n'
+    stroka = f'<b>{lg['days'][language][date(int(new_year), int(new_month), int(new_date)).weekday()]} {date_title}</b>\n\n'
     for i in timetable:
         stroka += f'{timetable[i]}\n\n'
 
-    await call.message.edit_text(stroka, reply_markup=kb.week[language], parse_mode='HTML')
+    keyboard = await kb.generate_week_keyboard(int(new_date), int(new_month), int(new_year))
+    await call.message.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
 
 @user.message(Command('admin'))
 async def admin_panel(message: Message):
