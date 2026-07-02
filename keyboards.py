@@ -1,6 +1,66 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from datetime import datetime
 
+async def generate_week_keyboard(day, month, year):
+    weekday = datetime(year, month, day).isoweekday()
+    
+    week = {
+        'ru': InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text='Пн',
+                                      callback_data=f'date_{day + (1 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Вт',
+                                      callback_data=f'date_{day + (2 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Ср',
+                                      callback_data=f'date_{day + (3 - weekday)}.{month}')],
+
+                [InlineKeyboardButton(text='Чт',
+                                      callback_data=f'date_{day + (4 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Пт',
+                                      callback_data=f'date_{day + (5 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Сб',
+                                      callback_data=f'date_{day + (6 - weekday)}.{month}')]
+            ]
+        ),
+
+        'en': InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text='Mon',
+                                      callback_data=f'date_{day + (1 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Tue',
+                                      callback_data=f'date_{day + (2 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Wed',
+                                      callback_data=f'date_{day + (3 - weekday)}.{month}')],
+
+                [InlineKeyboardButton(text='Thr',
+                                      callback_data=f'date_{day + (4 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Fri',
+                                      callback_data=f'date_{day + (5 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='Sat',
+                                      callback_data=f'date_{day + (6 - weekday)}.{month}')]
+            ]
+        ),
+
+        'zh': InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text='星期一',
+                                      callback_data=f'date_{day + (1 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='星期二',
+                                      callback_data=f'date_{day + (2 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='星期三',
+                                      callback_data=f'date_{day + (3 - weekday)}.{month}')],
+
+                [InlineKeyboardButton(text='星期四',
+                                      callback_data=f'date_{day + (4 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='星期五',
+                                      callback_data=f'date_{day + (5 - weekday)}.{month}'),
+                 InlineKeyboardButton(text='星期六 ',
+                                      callback_data=f'date_{day + (6 - weekday)}.{month}')]
+            ]
+        )
+    }
+    return week
+
 choose_language = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text='🇷🇺 Русский', callback_data='select_ru')],
@@ -8,7 +68,6 @@ choose_language = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='🇨🇳 中國人', callback_data='select_zh')]
     ]
 )
-
 
 menu = {
     'ru_menu': ReplyKeyboardMarkup(
@@ -64,66 +123,6 @@ cancel = {
         resize_keyboard = True
     )
 }
-
-async def generate_week_keyboard(day, month, year):
-    week = {
-        'ru': InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text='Пн',
-                                      callback_data=f'date_{day + (1 - datetime(year, month, day).isoweekday())}.{month}'),
-                 InlineKeyboardButton(text='Вт',
-                                      callback_data=f'date_{day + (2 - datetime(year, month, day).isoweekday())}.{month}'),
-                 InlineKeyboardButton(text='Ср',
-                                      callback_data=f'date_{day + (3 - datetime(year, month, day).isoweekday())}.{month}')],
-
-                [InlineKeyboardButton(text='Чт',
-                                      callback_data=f'date_{day + (4 - datetime(year, month, day).isoweekday())}.{month}'),
-                 InlineKeyboardButton(text='Пт',
-                                      callback_data=f'date_{day + (5 - datetime(year, month, day).isoweekday())}.{month}'),
-                 InlineKeyboardButton(text='Сб',
-                                      callback_data=f'date_{day + (6 - datetime(year, month, day).isoweekday())}.{month}')]
-            ]
-        ),
-
-        'en': InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text='Mon',
-                                      callback_data=f'date_{day + (1 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='Tue',
-                                      callback_data=f'date_{day + (2 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='Wed',
-                                      callback_data=f'date_{day + (3 - datetime.now().isoweekday())}.{datetime.now().month}')],
-
-                [InlineKeyboardButton(text='Thr',
-                                      callback_data=f'date_{day + (4 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='Fri',
-                                      callback_data=f'date_{day + (5 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='Sat',
-                                      callback_data=f'date_{day + (6 - datetime.now().isoweekday())}.{datetime.now().month}')]
-            ]
-        ),
-
-        'zh': InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text='星期一',
-                                      callback_data=f'date_{day + (1 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='星期二',
-                                      callback_data=f'date_{day + (2 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='星期三',
-                                      callback_data=f'date_{day + (3 - datetime.now().isoweekday())}.{datetime.now().month}')],
-
-                [InlineKeyboardButton(text='星期四',
-                                      callback_data=f'date_{day + (4 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='星期五',
-                                      callback_data=f'date_{day + (5 - datetime.now().isoweekday())}.{datetime.now().month}'),
-                 InlineKeyboardButton(text='星期六 ',
-                                      callback_data=f'date_{day + (6 - datetime.now().isoweekday())}.{datetime.now().month}')]
-            ]
-        )
-    }
-
-    return week
-
 
 settings = {
     'ru': InlineKeyboardMarkup(

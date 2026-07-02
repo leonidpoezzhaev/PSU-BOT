@@ -1,5 +1,5 @@
 TOKEN = '' #insert your bot token here
-ADMIN_CHAT = 0 #insert your telegram id here
+ADMIN_CHAT = 0 #insert your telegram id or telegram chat id here
 
 language = {
     'language_changed':{
@@ -155,5 +155,4 @@ language = {
     }
 }
 
-weekdays = ['', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 months = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

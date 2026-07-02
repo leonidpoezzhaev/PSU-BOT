@@ -1,19 +1,18 @@
 from aiogram import Router, F, Bot
-from aiogram.filters import CommandStart, Command, callback_data
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery, BufferedInputFile, ReplyKeyboardRemove
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from aiogram.fsm.context import FSMContext
-import keyboards as kb
 from config import language as lg
-from config import weekdays, ADMIN_CHAT, months
+from config import ADMIN_CHAT, months
 from states import take_url, cut_link, qr_link, send_message
 from statistics import new_request, generate_diagram
 from langid import classify, set_languages
-from icalendar import Calendar
 from datetime import datetime, date
-from calendar import monthrange
 from urls import fetch_ical, short_link
+from icalendar import Calendar
 from io import BytesIO
+import keyboards as kb
 import aiosqlite
 import qrcode
 
@@ -57,7 +56,8 @@ async def take_schedule(message:Message, state: FSMContext):
 
     link = link[0]
     language = classify(message.text)[0]
-    date_title = str(datetime.now()).split()[0]
+
+    date_title = str(datetime.now().date())
     date_title = f'{date_title[8:]}.{date_title[5:7]}.{date_title[0:4]}'
 
     if link is None:
@@ -95,7 +95,6 @@ async def take_schedule(message:Message, state: FSMContext):
         await new_request('timetable', message.chat.id)
 
         keyboard = await kb.generate_week_keyboard(int(datetime.now().day), int(datetime.now().month), int(datetime.now().year))
-        print(keyboard[language])
 
         await msg.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
 

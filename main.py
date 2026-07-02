@@ -1,7 +1,7 @@
-import asyncio
 from aiogram import Bot, Dispatcher
 from handlers import user
 from config import TOKEN
+import asyncio
 
 async def main():
     bot = Bot(token=TOKEN)
