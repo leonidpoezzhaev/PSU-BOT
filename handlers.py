@@ -270,8 +270,8 @@ async def week_days(call: CallbackQuery):
     if new_month // 10 == 0:
         new_month = '0' + str(new_month)
 
-    result_date = str(new_year) + str(new_month) + str(new_date)
-    date_title = f'{result_date[6:]}.{result_date[4:6]}.{result_date[:4]}'
+    result_date = str(new_year) + '-' + str(new_month) + '-' + str(new_date)
+    date_title = f'{result_date[8:]}.{result_date[5:7]}.{result_date[:4]}'
 
     url = await fetch_ical(link)
     cal = Calendar.from_ical(url)
