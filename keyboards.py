@@ -21,9 +21,9 @@ async def generate_week_keyboard(day, month, year):
                  InlineKeyboardButton(text='Сб',
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='Пред неделя',
+                [InlineKeyboardButton(text='⬅️ Пред неделя',
                                       callback_data=f'date_{day - 7}.{month}'),
-                 InlineKeyboardButton(text='След неделя',
+                 InlineKeyboardButton(text='➡️ След неделя',
                                       callback_data=f'date_{day + 7}.{month}')]
             ]
         ),
@@ -44,9 +44,9 @@ async def generate_week_keyboard(day, month, year):
                  InlineKeyboardButton(text='Sat',
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='Prev week',
+                [InlineKeyboardButton(text='⬅️ Prev week',
                                       callback_data=f'date_{day - 7}.{month}'),
-                 InlineKeyboardButton(text='Next week',
+                 InlineKeyboardButton(text='➡️ Next week',
                                       callback_data=f'date_{day + 7}.{month}')]
             ]
         ),
@@ -67,9 +67,9 @@ async def generate_week_keyboard(day, month, year):
                  InlineKeyboardButton(text='星期六 ',
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='上週',
+                [InlineKeyboardButton(text='⬅️ 上週',
                                       callback_data=f'date_{day - 7}.{month}'),
-                 InlineKeyboardButton(text='下週',
+                 InlineKeyboardButton(text='➡️ 下週',
                                       callback_data=f'date_{day + 7}.{month}')]
             ]
         )
