@@ -1,6 +1,8 @@
 TOKEN = '' #insert your bot token here
 ADMIN_CHAT = 0 #insert your telegram id or telegram chat id here
 
+months = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
 language = {
     'language_changed':{
         'ru': 'Язык выбран!',
@@ -154,5 +156,3 @@ language = {
         'zh': '輸入新連結：'
     }
 }
-
-months = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

@@ -12,7 +12,6 @@ async def fetch_url(session, endpoint, url):
     async with session.get(endpoint, params=params) as response:
         return await response.text()
 
-
 async def short_link(url):
     endpoint = 'https://clck.ru/--'
 

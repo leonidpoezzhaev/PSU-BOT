@@ -1,9 +1,9 @@
-import aiosqlite
+import matplotlib.pyplot as plt
+from datetime import datetime
+from io import BytesIO
 import pandas as pd
 import matplotlib
-import matplotlib.pyplot as plt
-from io import BytesIO
-from datetime import datetime
+import aiosqlite
 
 matplotlib.use('Agg')
 
