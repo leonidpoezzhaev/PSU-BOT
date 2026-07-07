@@ -93,7 +93,7 @@ async def take_schedule(message:Message, state: FSMContext):
 
         await new_request('timetable', message.chat.id)
 
-        keyboard = await kb.generate_week_keyboard(int(datetime.now().day), int(datetime.now().month), int(datetime.now().year))
+        keyboard = await kb.generate_week_keyboard(int(datetime.now().day), int(datetime.now().month), int(datetime.now().year), datetime.now().weekday())
 
         await msg.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
 
@@ -158,7 +158,7 @@ async def week_days(call: CallbackQuery):
     for i in timetable:
         stroka += f'{timetable[i]}\n\n'
 
-    keyboard = await kb.generate_week_keyboard(int(new_date), int(new_month), int(new_year))
+    keyboard = await kb.generate_week_keyboard(int(new_date), int(new_month), int(new_year), (date(int(new_year), int(new_month), int(new_date)).weekday()))
     await call.message.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
 
 @user.message(F.text.in_(['🔗 Сократить ссылку', '🔗 Shorten link', '🔗 縮短鏈接']))

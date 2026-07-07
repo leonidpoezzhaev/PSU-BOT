@@ -1,24 +1,27 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from datetime import datetime
 
-async def generate_week_keyboard(day, month, year):
+async def generate_week_keyboard(day, month, year, selected_day):
     weekday = datetime(year, month, day).isoweekday()
-    
+    another_color = ''
+    days = [another_color, another_color, another_color, another_color, another_color, another_color]
+    days[selected_day] = 'success'
+
     week = {
         'ru': InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text='Пн',
+                [InlineKeyboardButton(text='Пн', style=days[0],
                                       callback_data=f'date_{day + (1 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Вт',
+                 InlineKeyboardButton(text='Вт', style=days[1],
                                       callback_data=f'date_{day + (2 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Ср',
+                 InlineKeyboardButton(text='Ср', style=days[2],
                                       callback_data=f'date_{day + (3 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='Чт',
+                [InlineKeyboardButton(text='Чт', style=days[3],
                                       callback_data=f'date_{day + (4 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Пт',
+                 InlineKeyboardButton(text='Пт', style=days[4],
                                       callback_data=f'date_{day + (5 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Сб',
+                 InlineKeyboardButton(text='Сб', style=days[5],
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
                 [InlineKeyboardButton(text='⬅️ Пред неделя',
@@ -30,18 +33,18 @@ async def generate_week_keyboard(day, month, year):
 
         'en': InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text='Mon',
+                [InlineKeyboardButton(text='Mon', style=days[0],
                                       callback_data=f'date_{day + (1 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Tue',
+                 InlineKeyboardButton(text='Tue', style=days[1],
                                       callback_data=f'date_{day + (2 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Wed',
+                 InlineKeyboardButton(text='Wed', style=days[2],
                                       callback_data=f'date_{day + (3 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='Thr',
+                [InlineKeyboardButton(text='Thr', style=days[3],
                                       callback_data=f'date_{day + (4 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Fri',
+                 InlineKeyboardButton(text='Fri', style=days[4],
                                       callback_data=f'date_{day + (5 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='Sat',
+                 InlineKeyboardButton(text='Sat', style=days[5],
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
                 [InlineKeyboardButton(text='⬅️ Prev week',
@@ -53,18 +56,18 @@ async def generate_week_keyboard(day, month, year):
 
         'zh': InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text='星期一',
+                [InlineKeyboardButton(text='星期一', style=days[0],
                                       callback_data=f'date_{day + (1 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='星期二',
+                 InlineKeyboardButton(text='星期二', style=days[1],
                                       callback_data=f'date_{day + (2 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='星期三',
+                 InlineKeyboardButton(text='星期三', style=days[2],
                                       callback_data=f'date_{day + (3 - weekday)}.{month}')],
 
-                [InlineKeyboardButton(text='星期四',
+                [InlineKeyboardButton(text='星期四', style=days[3],
                                       callback_data=f'date_{day + (4 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='星期五',
+                 InlineKeyboardButton(text='星期五', style=days[4],
                                       callback_data=f'date_{day + (5 - weekday)}.{month}'),
-                 InlineKeyboardButton(text='星期六 ',
+                 InlineKeyboardButton(text='星期六 ', style=days[5],
                                       callback_data=f'date_{day + (6 - weekday)}.{month}')],
 
                 [InlineKeyboardButton(text='⬅️ 上週',
@@ -207,4 +210,33 @@ is_good_message = ReplyKeyboardMarkup(
         [KeyboardButton(text='❌ Отмена')]
     ],
     resize_keyboard=True
+)
+
+select_statistics = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
+        [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')],
+        [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
+    ]
+)
+
+statistics_1 = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')],
+        [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
+    ]
+)
+
+statistics_2 = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
+        [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')]
+    ]
+)
+
+statistics_3 = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
+        [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
+    ]
 )

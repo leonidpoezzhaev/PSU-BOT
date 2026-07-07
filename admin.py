@@ -180,15 +180,7 @@ async def send_bd(call: CallbackQuery):
 
 @admin.callback_query(F.data == 'check_statistics')
 async def stats(call: CallbackQuery):
-    await call.message.edit_text(
-        'Выберите статистику', reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
-                [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')],
-                [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
-            ]
-        )
-    )
+    await call.message.edit_text('Выберите статистику', reply_markup=kb.select_statistics)
 
 @admin.callback_query(F.data.startswith('stats:'))
 async def send_stats(call: CallbackQuery):
@@ -205,40 +197,19 @@ async def send_stats(call: CallbackQuery):
         date, use_bot, timetable, cut_link, make_qr, check_map, new_users = indicators
 
         await call.message.delete()
-        await call.message.answer_photo(photo=image,
+        await call.message.answer_photo(photo=image, reply_markup=kb.statistics_1,parse_mode='HTML',
                                         caption=f'<b>Статистика за <code>{date}</code></b>\n\n'
                                                 f'Воспользовались ботом: <code>{use_bot}</code> человек\n'
                                                 f'Новых пользователей: <code>{new_users}</code> человек\n\n'
                                                 f'Посмотрели расписание: <code>{timetable}</code> раз\n'
                                                 f'Сократили ссылку: <code>{cut_link}</code> раз\n'
                                                 f'Сделали QR-Код: <code>{make_qr}</code> раз\n'
-                                                f'Посмотрели карту: <code>{check_map}</code> раз',
-                                        reply_markup=InlineKeyboardMarkup(
-                                            inline_keyboard=[
-                                                [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')],
-                                                [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
-                                            ]
-                                        ),
-                                        parse_mode='HTML')
+                                                f'Посмотрели карту: <code>{check_map}</code> раз')
 
     elif type_stats == 'new_users':
         await call.message.delete()
-        await call.message.answer_photo(photo=image,
-                                        reply_markup=InlineKeyboardMarkup(
-                                            inline_keyboard=[
-                                                [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
-                                                [InlineKeyboardButton(text='Пользователи', callback_data='stats:usage')]
-                                            ]
-                                        ),
-                                        parse_mode='HTML')
+        await call.message.answer_photo(photo=image, reply_markup=kb.statistics_2, parse_mode='HTML')
 
     else:
         await call.message.delete()
-        await call.message.answer_photo(photo=image,
-                                        reply_markup=InlineKeyboardMarkup(
-                                            inline_keyboard=[
-                                                [InlineKeyboardButton(text='Сегодняшняя активность', callback_data='stats:today')],
-                                                [InlineKeyboardButton(text='Новые пользователи', callback_data='stats:new_users')]
-                                            ]
-                                        ),
-                                        parse_mode='HTML')
+        await call.message.answer_photo(photo=image, reply_markup=kb.statistics_3, parse_mode='HTML')
