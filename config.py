@@ -1,5 +1,6 @@
 TOKEN = '' #insert your bot token here
 ADMIN_CHAT = 0 #insert your telegram id or telegram chat id here
+U_TO_TOKEN = '' #insert your u.to token here
 
 months = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 

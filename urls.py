@@ -1,20 +1,26 @@
 import aiohttp
 
-async def fetch_ical(url: str) -> bytes:
+async def fetch_ical(url):
     conn = aiohttp.TCPConnector(ssl=False)
     async with aiohttp.ClientSession(connector=conn) as session:
         async with session.get(url) as resp:
             resp.raise_for_status()
             return await resp.read()
 
-async def fetch_url(session, endpoint, url):
-    params = {'url': url}
-    async with session.get(endpoint, params=params) as response:
-        return await response.text()
 
 async def short_link(url):
-    endpoint = 'https://clck.ru/--'
+    from config import U_TO_TOKEN
+    endpoint = 'https://u.to/api/shorten/'
+    payload = {'url': url, 'token': U_TO_TOKEN}
+    headers = {'Content-Type': 'application/json'}
 
-    async with aiohttp.ClientSession() as session:
-        response_text = await fetch_url(session, endpoint, url)
-        return response_text
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(endpoint, json=payload, headers=headers, ssl=False) as response:
+                response.raise_for_status()
+                data = await response.json()
+                short_url = data.get('shortUrl')
+                return short_url
+
+    except Exception as e:
+        return str(e)

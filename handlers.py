@@ -20,10 +20,18 @@ user = Router()
 
 @user.message(CommandStart())
 async def start_bot(message: Message):
-    await message.answer('🇷🇺 Добро пожаловать в бота! Пожалуйста, выберите язык:\n\n'
-                         '🇬🇧 Welcome to the bot! Please select a language:\n\n'
-                         '🇨🇳 歡迎使用機器人！請選擇語言:',
-                         reply_markup=kb.choose_language)
+    async with aiosqlite.connect('psu.db') as db:
+        async with db.execute('SELECT user_id, user_language FROM users WHERE user_id = ?', (message.chat.id,)) as cur:
+            check_user = await cur.fetchone()
+
+    if check_user is None:
+        await message.answer('🇷🇺 Добро пожаловать в бота! Пожалуйста, выберите язык:\n\n'
+                             '🇬🇧 Welcome to the bot! Please select a language:\n\n'
+                             '🇨🇳 歡迎使用機器人！請選擇語言:',
+                             reply_markup=kb.choose_language)
+    else:
+        await message.answer(f'{lg['welcome'][check_user[1]]}', reply_markup=kb.menu[f'{check_user[1]}_menu'])
+
 
 
 @user.callback_query(F.data.startswith('select_'))
@@ -36,12 +44,12 @@ async def select_language(call: CallbackQuery):
 
         if check_user is None:
             await db.execute('INSERT INTO users (user_id, user_language) VALUES (?, ?)', (call.message.chat.id, language))
-            await new_request('new_users', call.message.chat.id)
         else:
             await db.execute('UPDATE users SET user_language = ? WHERE user_id = ?', (language, call.message.chat.id))
 
         await db.commit()
 
+    await new_request('new_users', call.message.chat.id)
     await call.message.edit_text(text=f'{lg['language_changed'][language]}')
     await call.message.answer(f'{lg['welcome'][language]}',
                               reply_markup=kb.menu[f'{language}_menu'])
@@ -180,16 +188,16 @@ async def received_url(message:Message, state: FSMContext):
                              reply_markup=kb.menu[f'{language}_menu'])
     else:
         url = await short_link(message.text)
-        if 'https://clck.ru/' in url:
-            await message.answer(f'{url}\n\n{lg['by_psu_bot'][language]}',
-                                    reply_markup=kb.menu[f'{language}_menu'],
-                                    parse_mode='HTML')
-            await state.clear()
-            await new_request('cut_link', message.chat.id)
+        if 'Bad Request' in url:
+            await message.answer(f'{lg['link_error'][language]}\n\n{url}',
+                                 parse_mode='HTML')
 
         else:
-            await message.answer(f'{lg['link_error'][language]}',
+            await message.answer(f'{url}\n\n{lg['by_psu_bot'][language]}',
+                                 reply_markup=kb.menu[f'{language}_menu'],
                                  parse_mode='HTML')
+            await state.clear()
+            await new_request('cut_link', message.chat.id)
 
 
 @user.message(F.text.in_(['🔖 Сделать QR', '🔖 Create QR-Code', '🔖 製作二維碼']))
