@@ -51,6 +51,7 @@ pip install -r requirements.txt
 Отредактируйте файл `config.py` и укажите:
 - `TOKEN` — токен вашего Telegram-бота
 - `ADMIN_CHAT` — ваш Telegram ID или ID чата для административных уведомлений
+- `U_TO_TOKEN` - ваш токен с сайта [u.to](https://u.to/docs/)
 
 **4. Запуск**
 
