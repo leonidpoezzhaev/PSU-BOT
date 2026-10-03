@@ -82,7 +82,7 @@ async def take_schedule(message:Message, state: FSMContext):
         url = await fetch_ical(link)
         cal = Calendar.from_ical(url)
 
-        timetable = {'08:00' : '<b>1.</b> ', '09:45': '<b>2.</b> ', '11:30': '<b>3.</b> ', '13:30': '<b>4.</b> ', '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> '}
+        timetable = {'08:00' : '<b>1.</b> ', '09:45': '<b>2.</b> ', '11:30': '<b>3.</b> ', '13:30': '<b>4.</b> ', '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> ', '18:40': '<b>7.</b>'}
 
         for component in cal.walk():
             if component.name == "VEVENT":
@@ -103,7 +103,7 @@ async def take_schedule(message:Message, state: FSMContext):
 
         keyboard = await kb.generate_week_keyboard(int(datetime.now().day), int(datetime.now().month), int(datetime.now().year), datetime.now().weekday())
 
-        await msg.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
+        await msg.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML', disable_web_page_preview=True)
 
 @user.callback_query(F.data.startswith('date_'))
 async def week_days(call: CallbackQuery):
@@ -167,7 +167,7 @@ async def week_days(call: CallbackQuery):
         stroka += f'{timetable[i]}\n\n'
 
     keyboard = await kb.generate_week_keyboard(int(new_date), int(new_month), int(new_year), (date(int(new_year), int(new_month), int(new_date)).weekday()))
-    await call.message.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML')
+    await call.message.edit_text(stroka, reply_markup=keyboard[language], parse_mode='HTML', disable_web_page_preview=True)
 
 @user.message(F.text.in_(['🔗 Сократить ссылку', '🔗 Shorten link', '🔗 縮短鏈接']))
 async def take_link(message:Message, state: FSMContext):
