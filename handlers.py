@@ -148,7 +148,7 @@ async def week_days(call: CallbackQuery):
     cal = Calendar.from_ical(url)
 
     timetable = {'08:00': '<b>1.</b> ', '09:45': '<b>2.</b> ', '11:30': '<b>3.</b> ', '13:30': '<b>4.</b> ',
-                 '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> '}
+                 '15:15': '<b>5.</b> ', '17:00': '<b>6.</b> ', '18:40': '<b>7.</b>'}
 
     for component in cal.walk():
         if component.name == "VEVENT":
